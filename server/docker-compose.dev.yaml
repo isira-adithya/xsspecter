@@ -1,0 +1,80 @@
+services:
+  backend:
+    build:
+      context: ./backend/
+      target: development
+    environment:
+      - DATABASE_URL=postgresql://xsspecter:xsspecter@db:5432/xsspecter_db?schema=public
+    depends_on:
+      - db
+    networks:
+      - app-network
+    develop:
+      watch:
+        - action: sync
+          path: ./backend/
+          ignore:
+            - node_modules
+            - package-lock.json
+          target: /app/
+        - action: rebuild
+          path: ./backend/package.json
+        - action: sync+restart
+          path: ./backend/.env
+          target: /app/
+    env_file:
+      - ./backend/.env
+    restart: always
+
+  frontend:
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile.dev
+    networks:
+      - app-network
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend/
+          ignore:
+            - node_modules
+            - package-lock.json
+          target: /app/
+        - action: rebuild
+          path: ./frontend/package.json
+    restart: always
+
+  db:
+    image: postgres:17
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=xsspecter
+      - POSTGRES_PASSWORD=xsspecter
+      - POSTGRES_DB=xsspecter_db
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8081:80"
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - backend
+      - frontend
+      - db
+    networks:
+      - app-network
+    restart: always
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres-data:

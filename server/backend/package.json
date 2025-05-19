@@ -1,0 +1,37 @@
+{
+  "name": "xsspecter-server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "npm run setupenv && npm run pushdb && npm run generate && node index.js",
+    "setupenv": "echo DATABASE_URL=\"postgresql://xsspecter:$(cat $POSTGRES_PASSWORD_FILE | xxd -p|tr -d \\\\n|sed 's/../%&/g')@db:5432/xsspecter_db?schema=public\" > .env",
+    "dev": "nodemon index.js",
+    "migrate:dev": "npx prisma migrate dev",
+    "generate": "npx prisma generate",
+    "pushdb": "npx prisma db push"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "@quixo3/prisma-session-store": "^3.1.13",
+    "argon2": "^0.41.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "express-session": "^1.18.1",
+    "express-validator": "^7.2.1",
+    "nodemailer": "^6.10.0",
+    "nodemon": "^3.1.9",
+    "openai": "^4.93.0",
+    "terser": "^5.39.0"
+  },
+  "keywords": [
+    "xss",
+    "blind-xss",
+    "cybersecurity",
+    "ethical-hacking",
+    "hacking"
+  ],
+  "author": "isira_adithya",
+  "license": "ISC",
+  "description": "XSSpecter - Server"
+}

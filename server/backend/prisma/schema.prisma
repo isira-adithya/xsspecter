@@ -1,0 +1,170 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model XSSAlert {
+  id             Int             @id @default(autoincrement())
+  timestamp      DateTime
+  ip             String
+  userAgent      String
+  cookies        String
+  document       Document?
+  location       Location?
+  timezone       String
+  timezoneName   String
+  currentTime    String
+  permissions    Permission[]
+  isInIframe     Boolean
+  scripts        Script[]
+  metaTags       MetaTag[]
+  DocumentSource DocumentSource?
+  Report         Report?
+  Screenshot     Screenshot?
+  TrackingID     TrackingID?     @relation(fields: [trackingIDId], references: [id])
+  trackingIDId   Int?
+}
+
+model Document {
+  id           Int      @id @default(autoincrement())
+  title        String
+  URL          String
+  domain       String
+  referrer     String
+  lastModified String
+  readyState   String
+  characterSet String
+  contentType  String
+  designMode   String
+  children     Int
+  alert        XSSAlert @relation(fields: [alertId], references: [id])
+  alertId      Int      @unique
+}
+
+model Location {
+  id       Int      @id @default(autoincrement())
+  href     String
+  protocol String
+  host     String
+  hostname String
+  port     String
+  pathname String
+  search   String
+  hash     String
+  origin   String
+  alert    XSSAlert @relation(fields: [alertId], references: [id])
+  alertId  Int      @unique
+}
+
+model Permission {
+  id      Int      @id @default(autoincrement())
+  name    String
+  status  String
+  alert   XSSAlert @relation(fields: [alertId], references: [id])
+  alertId Int
+}
+
+model Script {
+  id      Int      @id @default(autoincrement())
+  src     String
+  type    String
+  async   Boolean
+  defer   Boolean
+  alert   XSSAlert @relation(fields: [alertId], references: [id])
+  alertId Int
+}
+
+model MetaTag {
+  id        Int      @id @default(autoincrement())
+  name      String
+  content   String
+  httpEquiv String
+  property  String?
+  alert     XSSAlert @relation(fields: [alertId], references: [id])
+  alertId   Int
+}
+
+model DocumentSource {
+  id       Int      @id @default(autoincrement())
+  document String
+  alert    XSSAlert @relation(fields: [alertId], references: [id])
+  alertId  Int      @unique
+}
+
+model Report {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  alert       XSSAlert @relation(fields: [alertId], references: [id])
+  alertId     Int      @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+}
+
+model Screenshot {
+  id         Int       @id @default(autoincrement())
+  name       String
+  data       Bytes     @db.ByteA
+  XSSAlert   XSSAlert? @relation(fields: [xssAlertId], references: [id])
+  xssAlertId Int?      @unique
+}
+
+enum UserRole {
+  ADMIN
+  USER
+  VIEWER
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  email     String?   @unique
+  password  String
+  apiToken  String?   @unique
+  role      UserRole  @default(USER)
+  firstName String?
+  lastName  String?
+  isActive  Boolean   @default(true)
+  isNotificationsEnabled Boolean @default(true)
+  lastLogin DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
+
+// Settings
+model Settings {
+  key       String   @id @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// TrackingIDs
+model TrackingID {
+  id          Int        @id @default(autoincrement())
+  trackingId  String
+  url         String
+  method      String
+  contentType String
+  data        Json
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  XSSAlert    XSSAlert[]
+}

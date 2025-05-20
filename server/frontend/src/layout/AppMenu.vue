@@ -29,7 +29,7 @@ const model = ref([
             {
                 label: 'Documentation',
                 icon: 'pi pi-fw pi-book',
-                to: 'https://github.com/isira-adithya/PUSL3190/blob/main/Documentation.md',
+                to: 'https://github.com/isira-adithya/xsspecter/blob/main/Documentation.md',
                 target: '_blank'
             },
             {

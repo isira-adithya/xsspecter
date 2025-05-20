@@ -72,6 +72,14 @@ xsspecter --version
 
 You can get your token by visiting https://example.com/app/account. (replace `example.com` with your domain)
 
+## Updating
+
+To update xsspecter to the latest version:
+
+```bash
+pipx upgrade xsspecter
+```
+
 ## Uninstallation
 
 To remove xsspecter:

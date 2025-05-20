@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Python 3.7 or higher
+- Python 3.10 or higher
 - pipx (recommended for CLI tool installation)
 
 If you don't have pipx installed, you can install it using pip:

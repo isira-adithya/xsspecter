@@ -47,14 +47,14 @@ chmod +x /usr/local/bin/docker-compose
 ### 4. Clone the Repository
 
 ```bash
-git clone https://github.com/isira-adithya/PUSL3190.git
+git clone https://github.com/isira-adithya/xsspecter.git
 ```
 
 ### 5. Run the Setup Script
 
 ```bash
 # Navigate to the project directory
-cd PUSL3190
+cd xsspecter
 
 # Make the setup script executable
 chmod +x setup.sh
@@ -74,7 +74,7 @@ If you chose not to start the containers during setup:
 
 ```bash
 # Navigate to the server directory
-cd PUSL3190/server/
+cd xsspecter/server/
 
 # Start Docker containers in detached mode
 docker-compose up -d

@@ -44,7 +44,7 @@ class PayloadSpray:
         query_dict = {}
         for key, info in data.items():
             # Ignore keys based on input type (e.g., csrf_token, session_id, cookie, token, etc.)
-            if info.get('type') in config.IGNORE_KEYS:
+            if key.lower() in config.IGNORE_KEYS:
                 query_dict[key] = info.get("value")
             # Check if the key type is a specific one, if so use suitable values
             elif info.get('type') == 'email':

@@ -86,7 +86,11 @@ def spray(
         unique_id, payloads = payload_generator.get_payloads(target)
         for payload in payloads:
             payloadSprayObj = PayloadSpray(payload=payload, target=target, http_session=crawler.http_session)
-            result = payloadSprayObj.run()
+            try:
+                result = payloadSprayObj.run()
+            except Exception as e:
+                console.print(f"[red]Error sending payload [blue]{payload}[/blue] to [blue]{target['url']}[/blue]: {e}[/red]")
+                continue
             if (result.status_code != 200):
                 console.print(f"[red]Payload [blue]{payload}[/blue] sent to [blue]{target['url']}[/blue] - Status {result.status_code}[/red]")
             else:

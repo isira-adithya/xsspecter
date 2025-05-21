@@ -18,6 +18,14 @@ class Config:
         self.max_depth = 2
         self.rate_limit = 5 # requests per second
         self.load(self.config_location)
+    
+    def is_configured(self):
+        # check if the domain and the api_key are set
+        if self.domain == '':
+            return False
+        if self.api_key == '':
+            return False
+        return True
 
     def load(self, config_file=None):
         if (config_file is None):

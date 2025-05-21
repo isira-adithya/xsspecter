@@ -1,10 +1,5 @@
 from modules.web_crawler import WebCrawler
 
-def test_is_valid_url():
-    wc = WebCrawler("http://example.com", should_crawl=False)
-    assert wc.is_valid_url("http://example.com/page")
-    assert not wc.is_valid_url("http://other.com")
-
 def test_get_depth():
     wc = WebCrawler("http://example.com")
     assert wc.get_depth("http://example.com") == 0

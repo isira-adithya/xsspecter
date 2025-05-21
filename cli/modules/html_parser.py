@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from modules.form_processor import FormProcessor
 from urllib.parse import urljoin, urlparse
+from modules.custom_functions import CustomFunctions
 
 class HTMLParser:
     def __init__(self, url, html):
@@ -79,8 +80,16 @@ class HTMLParser:
             except Exception as e:
                 print(f"Error processing form: {e}")
                 continue
+
             # every form's url in form_processor.form_data should be absolute
             form_processor.form_data['url'] = self.convert_to_absolute_url(form_processor.form_data['url'], self.url, self.url_schema)
+            
+            # Check if form action points to an out of scope URL
+            custom_funcs = CustomFunctions()
+            if not custom_funcs.is_valid_url(self.url, form_processor.form_data['url']):
+                print(f"Form action URL is out of scope: {form_processor.form_data['url']}")
+                continue
+
             self.forms_data.append(form_processor.form_data)
             
         links = self.find_links()

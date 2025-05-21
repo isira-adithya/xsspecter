@@ -2,9 +2,11 @@ from modules.config import Config
 import urllib.parse
 import requests
 from requests_toolbelt import MultipartEncoder
+from modules.custom_functions import CustomFunctions
 
 class PayloadSpray:
-    def __init__(self, payload, target, http_session: requests.Session):
+    def __init__(self, current_url, payload, target, http_session: requests.Session):
+        self.current_url = current_url
         self.payload = payload
         self.target = target
         self.http_session = http_session
@@ -33,7 +35,8 @@ class PayloadSpray:
                 'Accept-Encoding': 'gzip, deflate',
                 'Connection': 'keep-alive',
                 'Content-Type': encoder.content_type
-            }
+            },
+            allow_redirects=False,
         )
         
         return response
@@ -60,14 +63,18 @@ class PayloadSpray:
         return urllib.parse.urlencode(query_dict)
 
     def run(self):
+        # Check if the target URL is valid and not out of scope
+        custom_funcs = CustomFunctions()
+        if not custom_funcs.is_valid_url(self.current_url,self.target.get('url')):
+            raise ValueError(f"URL {self.target.get('url')} is not valid or out of scope.")
         if (self.target.get('method').lower() == 'get'):
             query = self.generate_query(self.target.get('data'))
-            result = self.http_session.get(f"{self.target.get('url')}?{query}", headers={'User-Agent': self.payload})
+            result = self.http_session.get(f"{self.target.get('url')}?{query}", headers={'User-Agent': self.payload}, allow_redirects=False)
             return result
         elif (self.target.get('method').lower() == 'post'):
             if self.target.get('content_type').lower() == 'application/x-www-form-urlencoded':
                 query = self.generate_query(self.target.get('data'))
-                result = self.http_session.post(self.target.get('url'), data=query, headers={'User-Agent': self.payload, 'Content-Type': self.target.get('content_type')})
+                result = self.http_session.post(self.target.get('url'), data=query, headers={'User-Agent': self.payload, 'Content-Type': self.target.get('content_type')}, allow_redirects=False)
                 return result
             elif self.target.get('content_type').lower() == 'multipart/form-data':
                 multipart_form_data = {}

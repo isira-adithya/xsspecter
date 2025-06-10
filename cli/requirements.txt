@@ -1,5 +1,5 @@
 beautifulsoup4==4.13.3
-Requests==2.32.3
+Requests==2.32.4
 requests_toolbelt==1.0.0
 rich==13.9.4
 typer==0.15.4
